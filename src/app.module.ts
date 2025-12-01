@@ -56,7 +56,8 @@ import { SmtpModule } from './smtp/smtp.module';
           password: dbPassword,
           database: dbName,
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
-          synchronize: true, // Set to false in production
+          // synchronize: true, // Set to false in production
+          synchronize: false, // Set to false in production
         };
       },
       inject: [ConfigService],

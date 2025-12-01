@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Código de verificación - PetFind</title>
+  <style>
+    body {
+      background-color: #f7f7f7;
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 0;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 550px;
+      margin: 40px auto;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 30px 40px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      color: #333333;
+      text-align: center;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .code-box {
+      text-align: center;
+      background: #e9f7f9;
+      padding: 18px;
+      border-radius: 10px;
+      margin: 25px 0;
+      font-size: 30px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      color: #007a8c;
+    }
+
+    p {
+      font-size: 15px;
+      line-height: 1.5;
+      color: #555555;
+    }
+
+    .footer {
+      margin-top: 35px;
+      font-size: 13px;
+      text-align: center;
+      color: #888888;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <div class="logo">
+      <img src="https://img.icons8.com/emoji/96/dog-face.png" width="70" alt="PetFind Logo" />
+      <h1>¡Bienvenido a PetFind!</h1>
+    </div>
+
+    <p>Hola {{userName}},</p>
+
+    <p>
+      Gracias por registrarte en <strong>PetFind</strong>. Antes de continuar, necesitamos
+      confirmar que este correo te pertenece.
+    </p>
+
+    <p>Tu código de verificación es:</p>
+
+    <div class="code-box">
+      {{verificationCode}}
+    </div>
+
+    <p>
+      Este código es válido por los próximos <strong>10 minutos</strong>.  
+      Si no solicitaste este código, simplemente ignora este mensaje.
+    </p>
+
+    <div class="footer">
+      ¿Necesitas ayuda? Contáctanos en <strong>{{supportEmail}}</strong><br>
+      PetFind © {{year}} — Todos los derechos reservados.
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,5 +1,13 @@
+import { OtpCodeEntity } from 'src/auth/entities/email-otp-code.entity';
 import { SystemRoleEntity } from 'src/models/system-role/entities/system-role.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { EmailEntity } from 'src/smtp/entities/email.entity';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('users')
 export class UserEntity {
@@ -49,6 +57,12 @@ export class UserEntity {
   // Relationships
   @ManyToOne(() => SystemRoleEntity, (systemRole) => systemRole.users)
   systemRole: SystemRoleEntity;
+
+  @OneToMany(() => OtpCodeEntity, (otpCode) => otpCode.user)
+  otpCodes: OtpCodeEntity[];
+
+  @OneToMany(() => EmailEntity, (email) => email.user)
+  emails: EmailEntity[];
 
   // shelterMemberships?: ShelterUser[];
   // sheltersCreated?: Shelter[];

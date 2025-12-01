@@ -7,11 +7,14 @@ import { SecurityModule } from 'src/security/security.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/models/user/entities/user.entity';
 import { SystemRoleEntity } from 'src/models/system-role/entities/system-role.entity';
+import { SmtpModule } from 'src/smtp/smtp.module';
+import { OtpCodeEntity } from './entities/email-otp-code.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity, SystemRoleEntity]),
+    TypeOrmModule.forFeature([UserEntity, SystemRoleEntity, OtpCodeEntity]),
     SecurityModule,
+    SmtpModule,
     JwtModule.registerAsync({
       global: true,
       inject: [ConfigService],

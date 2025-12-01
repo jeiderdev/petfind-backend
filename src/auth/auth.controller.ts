@@ -4,6 +4,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { SignupDto } from './dto/signup.dto';
 import { SigninDto } from './dto/signin.dto';
 import { Auth } from './decorators/auth.decorator';
+import { ValidateOtpCodeDto } from './dto/validate-otp-code.dto';
+import { ResendOtpCodeDto } from './dto/resend-otp-code.dto';
 
 @ApiTags('auth')
 @ApiBearerAuth()
@@ -29,5 +31,15 @@ export class AuthController {
       throw new Error('User information is missing in the request');
     }
     return await this.authService.getUserProfile(user.id as number);
+  }
+
+  @Post('validate-otp')
+  async validateOtpCode(@Body() validateOtpCodeDto: ValidateOtpCodeDto) {
+    return this.authService.validateOtpCode(validateOtpCodeDto);
+  }
+
+  @Post('resend-otp')
+  async resendOtpCode(@Body() resendOtpCodeDto: ResendOtpCodeDto) {
+    return await this.authService.resendEmailOtpCode(resendOtpCodeDto);
   }
 }

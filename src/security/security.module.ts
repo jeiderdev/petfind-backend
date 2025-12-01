@@ -4,6 +4,6 @@ import { EncryptionService } from './encryption.service';
 
 @Module({
   providers: [HashingService, EncryptionService],
-  exports: [HashingService],
+  exports: [HashingService, EncryptionService],
 })
 export class SecurityModule {}
