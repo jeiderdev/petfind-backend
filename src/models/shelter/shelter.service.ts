@@ -44,7 +44,40 @@ export class ShelterService {
       ...createShelterDto,
       createdById: userId,
     });
-    return this.shelterRepository.save(shelter);
+    const admins = await this.userRepository.find({
+      where: {
+        systemRole: {
+          name: SystemRoles.ADMIN,
+        },
+      },
+    });
+    const res = await this.shelterRepository.save(shelter);
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+    await Promise.all(
+      admins.map((admin) => {
+        const sendEmailDto: SendEmailDto = {
+          userId: admin.id,
+          email: admin.email,
+          subject: 'Nuevo refugio creado - Requiere aprobación',
+          template: 'shelter-created',
+          context: {
+            userName: admin.firstName + ' ' + admin.lastName,
+            shelterName: res.name,
+            createdBy: `${user?.firstName} ${user?.lastName} (${user?.email})`,
+            contactEmail: res.contactEmail,
+            contactPhone: res.contactPhone,
+            location: res.address,
+            createdAt: res.createdAt,
+            shelterUrl: `${this.frontEndUrl}/admin/shelters/${res.id}`,
+            year: new Date().getFullYear(),
+          },
+        };
+        return this.smtpService.sendEmail(sendEmailDto);
+      }),
+    );
+    return res;
   }
 
   async findAll(
@@ -136,7 +169,7 @@ export class ShelterService {
     const sendEmailDto: SendEmailDto = {
       userId: shelter.createdById,
       email: creator.email,
-      subject: 'Your shelter has been approved',
+      subject: 'Tu refugio ha sido aprobado',
       template: 'shelter-approved',
       context: {
         userName: creator.firstName + ' ' + creator.lastName,
