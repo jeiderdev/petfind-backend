@@ -8,9 +8,9 @@ export interface UserPayload {
 }
 
 export function isUserPayload(obj: unknown): obj is UserPayload {
+  if (!obj) return false;
+  if (typeof obj !== 'object') return false;
   return (
-    typeof obj === 'object' &&
-    obj !== null &&
     'id' in obj &&
     typeof obj.id === 'number' &&
     'email' in obj &&

@@ -3,7 +3,10 @@ import { SystemRoleService } from './system-role.service';
 import { UpdateSystemRoleDto } from './dto/update-system-role.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { SystemRoles } from 'src/common/enums/system-role.enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('System Roles')
+@ApiBearerAuth()
 @Controller('system-role')
 export class SystemRoleController {
   constructor(private readonly systemRoleService: SystemRoleService) {}

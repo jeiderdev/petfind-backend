@@ -1,4 +1,11 @@
-import { Controller, Post, Body, Get, Req } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { SignupDto } from './dto/signup.dto';
@@ -6,8 +13,9 @@ import { SigninDto } from './dto/signin.dto';
 import { Auth } from './decorators/auth.decorator';
 import { ValidateOtpCodeDto } from './dto/validate-otp-code.dto';
 import { ResendOtpCodeDto } from './dto/resend-otp-code.dto';
+import { getUserFronRequest } from './utils';
 
-@ApiTags('auth')
+@ApiTags('Authentication')
 @ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
@@ -26,11 +34,9 @@ export class AuthController {
   @Auth()
   @Get('profile')
   async getProfile(@Req() req: Request) {
-    const user: unknown = req['user'];
-    if (!user || typeof user !== 'object' || !('id' in user)) {
-      throw new Error('User information is missing in the request');
-    }
-    return await this.authService.getUserProfile(user.id as number);
+    const user = getUserFronRequest(req);
+    if (!user) throw new UnauthorizedException();
+    return await this.authService.getUserProfile(user.id);
   }
 
   @Post('validate-otp')

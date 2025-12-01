@@ -8,6 +8,8 @@ import { SecurityModule } from './security/security.module';
 import { UserModule } from './models/user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { SmtpModule } from './smtp/smtp.module';
+import { ShelterModule } from './models/shelter/shelter.module';
+import { ShelterUserModule } from './models/shelter-user/shelter-user.module';
 
 @Module({
   imports: [
@@ -67,6 +69,8 @@ import { SmtpModule } from './smtp/smtp.module';
     UserModule,
     AuthModule,
     SmtpModule,
+    ShelterModule,
+    ShelterUserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,4 +1,6 @@
 import { OtpCodeEntity } from 'src/auth/entities/otp-code.entity';
+import { ShelterUserEntity } from 'src/models/shelter-user/entities/shelter-user.entity';
+import { ShelterEntity } from 'src/models/shelter/entities/shelter.entity';
 import { SystemRoleEntity } from 'src/models/system-role/entities/system-role.entity';
 import { EmailEntity } from 'src/smtp/entities/email.entity';
 import {
@@ -64,8 +66,14 @@ export class UserEntity {
   @OneToMany(() => EmailEntity, (email) => email.user)
   emails: EmailEntity[];
 
-  // shelterMemberships?: ShelterUser[];
-  // sheltersCreated?: Shelter[];
+  @OneToMany(() => ShelterEntity, (shelter) => shelter.createdBy)
+  sheltersCreated: ShelterEntity[];
+
+  @OneToMany(() => ShelterEntity, (shelter) => shelter.approvedBy)
+  sheltersApproved: ShelterEntity[];
+
+  @OneToMany(() => ShelterUserEntity, (shelterUser) => shelterUser.user)
+  shelterMemberships?: ShelterUserEntity[];
   // notifications?: Notification[];
   // adoptionRequests?: AdoptionRequest[];
   // adoptedAnimals?: Animal[];
