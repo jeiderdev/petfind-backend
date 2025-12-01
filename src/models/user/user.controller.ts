@@ -1,7 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Req,
+  BadRequestException,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { SystemRoles } from 'src/common/enums/system-role.enum';
+import { getUserFronRequest } from 'src/auth/utils';
 
 @Controller('user')
 export class UserController {
@@ -12,21 +25,41 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
+  @Auth({ roles: [SystemRoles.ADMIN] })
   @Get()
   findAll() {
     return this.userService.findAll();
   }
 
+  @Auth()
+  @Get('me')
+  findMe(@Req() req: Request) {
+    const user = getUserFronRequest(req);
+    if (!user) throw new BadRequestException('User not found in request');
+    return this.userService.findOne(user.id);
+  }
+
+  @Auth({ roles: [SystemRoles.ADMIN] })
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(+id);
   }
 
+  @Auth()
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() req: Request,
+  ) {
+    const user = getUserFronRequest(req);
+    if (!user) throw new BadRequestException('User not found in request');
+    if (user.id !== +id)
+      throw new BadRequestException('You can only update your own profile');
     return this.userService.update(+id, updateUserDto);
   }
 
+  @Auth({ roles: [SystemRoles.ADMIN] })
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);

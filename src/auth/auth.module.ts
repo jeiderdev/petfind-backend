@@ -13,6 +13,7 @@ import { SystemRoleEntity } from 'src/models/system-role/entities/system-role.en
     TypeOrmModule.forFeature([UserEntity, SystemRoleEntity]),
     SecurityModule,
     JwtModule.registerAsync({
+      global: true,
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         const jwtSecret = configService.get<string>('JWT_SECRET');
@@ -40,5 +41,6 @@ import { SystemRoleEntity } from 'src/models/system-role/entities/system-role.en
   ],
   controllers: [AuthController],
   providers: [AuthService],
+  exports: [AuthService],
 })
 export class AuthModule {}

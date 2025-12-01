@@ -20,4 +20,12 @@ export function isUserPayload(obj: unknown): obj is UserPayload {
   );
 }
 
+export function getUserFronRequest(req: Request): UserPayload | null {
+  const user: unknown = req['user'];
+  if (isUserPayload(user)) {
+    return user;
+  }
+  return null;
+}
+
 export const DEFAULT_SYSTEM_ROLE: SystemRoles = SystemRoles.USER;
