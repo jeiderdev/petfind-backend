@@ -1,4 +1,4 @@
-import { OtpCodeEntity } from 'src/auth/entities/email-otp-code.entity';
+import { OtpCodeEntity } from 'src/auth/entities/otp-code.entity';
 import { SystemRoleEntity } from 'src/models/system-role/entities/system-role.entity';
 import { EmailEntity } from 'src/smtp/entities/email.entity';
 import {

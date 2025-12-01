@@ -8,7 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/models/user/entities/user.entity';
 import { SystemRoleEntity } from 'src/models/system-role/entities/system-role.entity';
 import { SmtpModule } from 'src/smtp/smtp.module';
-import { OtpCodeEntity } from './entities/email-otp-code.entity';
+import { OtpCodeEntity } from './entities/otp-code.entity';
 
 @Module({
   imports: [

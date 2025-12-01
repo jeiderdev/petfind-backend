@@ -12,7 +12,7 @@ import { DEFAULT_SYSTEM_ROLE, UserPayload } from './utils';
 import { SignupDto } from './dto/signup.dto';
 import { SystemRoleEntity } from 'src/models/system-role/entities/system-role.entity';
 import { SigninDto } from './dto/signin.dto';
-import { OtpCodeEntity } from './entities/email-otp-code.entity';
+import { OtpCodeEntity } from './entities/otp-code.entity';
 import { EncryptionService } from 'src/security/encryption.service';
 import { SmtpService } from 'src/smtp/smtp.service';
 import { ValidateOtpCodeDto } from './dto/validate-otp-code.dto';
@@ -94,11 +94,12 @@ export class AuthService {
       userId: user.id,
       email: user.email,
       subject: 'Your OTP Code',
-      template: 'email-otp-code',
+      template: 'otp-code',
       context: {
         userName: user.firstName,
         verificationCode: otpCode,
         supportEmail,
+        validTime: 10,
         year: new Date().getFullYear(),
       },
     });
