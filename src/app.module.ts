@@ -7,6 +7,7 @@ import { SystemRoleModule } from './models/system-role/system-role.module';
 import { SecurityModule } from './security/security.module';
 import { UserModule } from './models/user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { SmtpModule } from './smtp/smtp.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { AuthModule } from './auth/auth.module';
     SecurityModule,
     UserModule,
     AuthModule,
+    SmtpModule,
   ],
   controllers: [AppController],
   providers: [AppService],
