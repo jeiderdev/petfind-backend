@@ -9,5 +9,6 @@ import { UserEntity } from '../user/entities/user.entity';
   imports: [TypeOrmModule.forFeature([ShelterUserEntity, UserEntity])],
   controllers: [ShelterUserController],
   providers: [ShelterUserService],
+  exports: [ShelterUserService],
 })
 export class ShelterUserModule {}

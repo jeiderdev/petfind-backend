@@ -5,9 +5,16 @@ import { AuthModule } from 'src/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ShelterEntity } from './entities/shelter.entity';
 import { UserEntity } from '../user/entities/user.entity';
+import { ShelterUserModule } from '../shelter-user/shelter-user.module';
+import { SmtpModule } from 'src/smtp/smtp.module';
 
 @Module({
-  imports: [AuthModule, TypeOrmModule.forFeature([ShelterEntity, UserEntity])],
+  imports: [
+    AuthModule,
+    TypeOrmModule.forFeature([ShelterEntity, UserEntity]),
+    ShelterUserModule,
+    SmtpModule,
+  ],
   controllers: [ShelterController],
   providers: [ShelterService],
   exports: [ShelterService],

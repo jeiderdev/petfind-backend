@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nuevo refugio creado - PetFind</title>
+  <style>
+    body {
+      background-color: #f7f7f7;
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 0;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 550px;
+      margin: 40px auto;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 30px 40px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      color: #333333;
+      text-align: center;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .card-box {
+      background: #e9f7f9;
+      padding: 18px;
+      border-radius: 10px;
+      margin: 25px 0;
+      color: #007a8c;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    p {
+      font-size: 15px;
+      line-height: 1.5;
+      color: #555555;
+    }
+
+    .footer {
+      margin-top: 35px;
+      font-size: 13px;
+      text-align: center;
+      color: #888888;
+    }
+
+    .info-title {
+      font-weight: bold;
+      color: #006b79;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="logo">
+      <img src="https://img.icons8.com/emoji/96/dog-face.png" width="70" alt="PetFind Logo" />
+      <h1>Nuevo refugio registrado</h1>
+    </div>
+
+    <p>Hola {{adminName}},</p>
+
+    <p>
+      Te informamos que se ha creado un nuevo refugio dentro de la plataforma <strong>PetFind</strong>.
+      A continuación encontrarás los detalles del registro:
+    </p>
+
+    <div class="card-box">
+      <p><span class="info-title">Nombre del refugio:</span> {{shelterName}}</p>
+      <p><span class="info-title">Registrado por:</span> {{createdBy}}</p>
+      <p><span class="info-title">Correo de contacto:</span> {{contactEmail}}</p>
+      <p><span class="info-title">Teléfono:</span> {{contactPhone}}</p>
+      <p><span class="info-title">Ubicación:</span> {{location}}</p>
+      <p><span class="info-title">Fecha de registro:</span> {{createdAt}}</p>
+    </div>
+
+    <p>
+      Revisa la información y realiza cualquier acción necesaria desde el panel administrativo.
+    </p>
+
+    <div class="footer">
+      PetFind © {{year}} — Todos los derechos reservados.
+    </div>
+
+  </div>
+</body>
+</html>

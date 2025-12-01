@@ -4,18 +4,37 @@ import { UpdateShelterDto } from './dto/update-shelter.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ShelterEntity } from './entities/shelter.entity';
 import { FindManyOptions, Repository } from 'typeorm';
-import { ShelterStatus } from 'src/common/enums/shelter.enum';
+import { ShelterRole, ShelterStatus } from 'src/common/enums/shelter.enum';
 import { UserEntity } from '../user/entities/user.entity';
 import { SystemRoles } from 'src/common/enums/system-role.enum';
+import { ShelterUserService } from '../shelter-user/shelter-user.service';
+import { SmtpService } from 'src/smtp/smtp.service';
+import { SendEmailDto } from 'src/smtp/dtos/send-email.dto';
 
 @Injectable()
 export class ShelterService {
+  private supportEmail: string;
+  private frontEndUrl: string;
+
   constructor(
     @InjectRepository(ShelterEntity)
     private readonly shelterRepository: Repository<ShelterEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-  ) {}
+    private readonly shelterUserService: ShelterUserService,
+    private readonly smtpService: SmtpService,
+  ) {
+    const auxSupportEmail = process.env.SUPPORT_EMAIL;
+    const auxFrontEndUrl = process.env.FRONTEND_URL;
+    if (!auxSupportEmail) {
+      throw new Error('SUPPORT_EMAIL is not defined in environment variables');
+    }
+    if (!auxFrontEndUrl) {
+      throw new Error('FRONTEND_URL is not defined in environment variables');
+    }
+    this.supportEmail = auxSupportEmail;
+    this.frontEndUrl = auxFrontEndUrl;
+  }
 
   async create(
     createShelterDto: CreateShelterDto,
@@ -77,14 +96,58 @@ export class ShelterService {
   }
 
   async approve(id: number, approverId: number): Promise<ShelterEntity> {
-    const shelter = await this.findOne(id);
+    const shelter = await this.findOne(id, {
+      relations: {
+        createdBy: true,
+      },
+    });
     if (!shelter) {
       throw new BadRequestException(`Shelter with ID ${id} not found`);
+    }
+    const approver = await this.userRepository.findOne({
+      where: { id: approverId },
+      relations: {
+        systemRole: true,
+      },
+    });
+    if (!approver) {
+      throw new BadRequestException(`User with ID ${approverId} not found`);
+    }
+    const isAdmin = approver.systemRole?.name === SystemRoles.ADMIN;
+    if (!isAdmin) {
+      throw new BadRequestException(`Only system admins can approve shelters`);
     }
     shelter.status = ShelterStatus.APPROVED;
     shelter.approvedById = approverId;
     shelter.approvedAt = new Date();
-    return await this.shelterRepository.save(shelter);
+    const res = await this.shelterRepository.save(shelter);
+    try {
+      const ownerRoleDto = {
+        shelterId: shelter.id,
+        userId: approverId,
+        role: ShelterRole.OWNER,
+      };
+      await this.shelterUserService.create(ownerRoleDto, approverId);
+    } catch (error) {
+      // Log error but do not block the approval process
+      console.error('Error assigning OWNER role to approver:', error);
+    }
+    const creator = shelter.createdBy;
+    const sendEmailDto: SendEmailDto = {
+      userId: shelter.createdById,
+      email: creator.email,
+      subject: 'Your shelter has been approved',
+      template: 'shelter-approved',
+      context: {
+        userName: creator.firstName + ' ' + creator.lastName,
+        shelterName: shelter.name,
+        supportEmail: this.supportEmail,
+        shelterUrl: `${this.frontEndUrl}/shelters/${shelter.id}`,
+        year: new Date().getFullYear(),
+      },
+    };
+    await this.smtpService.sendEmail(sendEmailDto);
+    return res;
   }
 
   async remove(id: number): Promise<void> {
