@@ -41,5 +41,5 @@ export class ShelterUserEntity {
 
   @ManyToOne(() => UserEntity, (user) => user.shelterMemberships)
   @JoinColumn({ name: 'userId' })
-  user?: UserEntity;
+  user: UserEntity;
 }

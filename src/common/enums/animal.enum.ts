@@ -1,14 +1,14 @@
 export enum AnimalGender {
+  UNKNOWN = 'unknown',
   MALE = 'male',
   FEMALE = 'female',
-  UNKNOWN = 'unknown',
 }
 
 export enum AnimalStatus {
-  AVAILABLE = 'available',
   PENDING = 'pending',
-  ADOPTED = 'adopted',
+  AVAILABLE = 'available',
   NOT_AVAILABLE = 'not_available',
+  ADOPTED = 'adopted',
 }
 
 export enum AnimalSize {

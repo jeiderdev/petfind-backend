@@ -33,7 +33,7 @@ export class AnimalEntity {
   speciesId: number;
 
   @Column({ nullable: true })
-  breedId?: number;
+  breedId: number;
 
   @Column({ type: 'enum', enum: AnimalGender, default: AnimalGender.UNKNOWN })
   gender: AnimalGender;
