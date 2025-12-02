@@ -54,6 +54,19 @@ export class ShelterController {
     return this.shelterService.update(+id, updateShelterDto, user.id);
   }
 
+  @Get(':id/with-animals')
+  getAnimals(@Param('id') id: string) {
+    return this.shelterService.findAll({
+      where: { id: +id },
+      relations: {
+        animals: {
+          species: true,
+          breed: true,
+        },
+      },
+    });
+  }
+
   @Auth({ roles: [SystemRoles.ADMIN] })
   @Post(':id/approve')
   approve(@Param('id') id: string, @Req() req: Request) {
@@ -72,6 +85,14 @@ export class ShelterController {
     const user = getUserFronRequest(req);
     if (!user) throw new UnauthorizedException();
     return this.shelterService.reject(+id, rejectShelterDto, user.id);
+  }
+
+  @Auth()
+  @Get(':id/with-members')
+  getMembers(@Param('id') id: string, @Req() req: Request) {
+    const user = getUserFronRequest(req);
+    if (!user) throw new UnauthorizedException();
+    return this.shelterService.getShelterMembers(+id, user.id);
   }
 
   @Auth({ roles: [SystemRoles.ADMIN] })

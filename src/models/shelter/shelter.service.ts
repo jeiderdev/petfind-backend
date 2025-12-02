@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateShelterDto } from './dto/create-shelter.dto';
 import { UpdateShelterDto } from './dto/update-shelter.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -217,6 +221,33 @@ export class ShelterService {
     };
     await this.smtpService.sendEmail(sendEmailDto);
     return res;
+  }
+
+  async getShelterMembers(
+    shelterId: number,
+    userId: number,
+  ): Promise<ShelterEntity> {
+    const hasPermission =
+      await this.shelterUserService.hasPermissionToManageMembers(
+        shelterId,
+        userId,
+      );
+    if (!hasPermission) {
+      throw new UnauthorizedException(
+        `You do not have permission to manage members of shelter ID ${shelterId}`,
+      );
+    }
+    const shelter = await this.findOne(shelterId, {
+      relations: {
+        members: {
+          user: true,
+        },
+      },
+    });
+    if (!shelter) {
+      throw new BadRequestException(`Shelter with ID ${shelterId} not found`);
+    }
+    return shelter;
   }
 
   async remove(id: number): Promise<void> {
