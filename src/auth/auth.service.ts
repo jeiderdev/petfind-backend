@@ -33,7 +33,7 @@ export class AuthService {
     private readonly smtpService: SmtpService,
   ) {}
 
-  async encodePassword(password: string): Promise<string> {
+  async hashPassword(password: string): Promise<string> {
     return this.hashingService.hash(password);
   }
 
@@ -93,7 +93,7 @@ export class AuthService {
     await this.smtpService.sendEmail({
       userId: user.id,
       email: user.email,
-      subject: 'Your OTP Code',
+      subject: 'Tu código OTP de verificación',
       template: 'otp-code',
       context: {
         userName: user.firstName,
@@ -133,7 +133,7 @@ export class AuthService {
         `Default system role '${DEFAULT_SYSTEM_ROLE}' not found`,
       );
     }
-    const passwordHash = await this.encodePassword(password);
+    const passwordHash = await this.hashPassword(password);
     const newUser = this.userRepository.create({
       ...signUpDto,
       password: passwordHash,

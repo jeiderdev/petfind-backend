@@ -58,8 +58,8 @@ import { ShelterUserModule } from './models/shelter-user/shelter-user.module';
           password: dbPassword,
           database: dbName,
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
-          // synchronize: true, // Set to false in production
-          synchronize: false, // Set to false in production
+          synchronize: true, // Set to false in production
+          // synchronize: false, // Set to false in production
         };
       },
       inject: [ConfigService],
