@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   UnauthorizedException,
+  Query,
 } from '@nestjs/common';
 import { ShelterService } from './shelter.service';
 import { CreateShelterDto } from './dto/create-shelter.dto';
@@ -55,16 +56,8 @@ export class ShelterController {
   }
 
   @Get(':id/with-animals')
-  getAnimals(@Param('id') id: string) {
-    return this.shelterService.findAll({
-      where: { id: +id },
-      relations: {
-        animals: {
-          species: true,
-          breed: true,
-        },
-      },
-    });
+  getAnimals(@Param('id') id: string, @Query() query: Record<string, string>) {
+    return this.shelterService.findOneWithAnimals(+id, query);
   }
 
   @Auth({ roles: [SystemRoles.ADMIN] })
