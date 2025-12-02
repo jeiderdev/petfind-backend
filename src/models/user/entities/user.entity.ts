@@ -74,6 +74,7 @@ export class UserEntity {
 
   @OneToMany(() => ShelterUserEntity, (shelterUser) => shelterUser.user)
   shelterMemberships?: ShelterUserEntity[];
+
   // notifications?: Notification[];
   // adoptionRequests?: AdoptionRequest[];
   // adoptedAnimals?: Animal[];

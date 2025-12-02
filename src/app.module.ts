@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { SmtpModule } from './smtp/smtp.module';
 import { ShelterModule } from './models/shelter/shelter.module';
 import { ShelterUserModule } from './models/shelter-user/shelter-user.module';
+import { SpeciesModule } from './models/species/species.module';
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import { ShelterUserModule } from './models/shelter-user/shelter-user.module';
     SmtpModule,
     ShelterModule,
     ShelterUserModule,
+    SpeciesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

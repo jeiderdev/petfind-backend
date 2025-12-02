@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Especie actualizada - PetFind</title>
+  <style>
+    body {
+      background-color: #f7f7f7;
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 0;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 550px;
+      margin: 40px auto;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 30px 40px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      color: #333333;
+      text-align: center;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .info-box {
+      background: #fff7e6;
+      padding: 18px;
+      border-radius: 10px;
+      margin: 25px 0;
+      color: #b36b00;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    p {
+      font-size: 15px;
+      line-height: 1.5;
+      color: #555555;
+    }
+
+    .footer {
+      margin-top: 35px;
+      font-size: 13px;
+      text-align: center;
+      color: #888888;
+    }
+
+    .info-title {
+      font-weight: bold;
+      color: #a15c00;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="logo">
+      <img src="https://img.icons8.com/emoji/96/dog-face.png" width="70" alt="PetFind Logo" />
+      <h1>Especie actualizada</h1>
+    </div>
+
+    <p>Hola {{adminName}},</p>
+
+    <p>
+      Una especie registrada en <strong>PetFind</strong> ha sido actualizada. A continuación se muestran los detalles del cambio:
+    </p>
+
+    <div class="info-box">
+      <p><span class="info-title">Especie actualizada:</span> {{speciesName}} '{{speciesId}}'</p>
+      <p><span class="info-title">Actualizado por:</span> {{updatedBy}}</p>
+      <p><span class="info-title">Correo del usuario:</span> {{userEmail}}</p>
+      <p><span class="info-title">Fecha de actualización:</span> {{updatedAt}}</p>
+    </div>
+
+    <p>
+      Si lo consideras necesario, puedes revisar esta especie directamente desde tu panel administrativo.
+    </p>
+
+    <div class="footer">
+      PetFind © {{year}} — Todos los derechos reservados.
+    </div>
+
+  </div>
+</body>
+</html>
