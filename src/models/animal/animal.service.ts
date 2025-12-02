@@ -8,7 +8,7 @@ import { CreateAnimalDto } from './dto/create-animal.dto';
 import { UpdateAnimalDto } from './dto/update-animal.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AnimalEntity } from './entities/animal.entity';
-import { FindManyOptions, Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { ShelterUserEntity } from '../shelter-user/entities/shelter-user.entity';
 import { SmtpService } from 'src/smtp/smtp.service';
 import { ShelterRole } from 'src/common/enums/shelter.enum';
@@ -16,7 +16,11 @@ import { SendEmailDto } from 'src/smtp/dtos/send-email.dto';
 import { ShelterEntity } from '../shelter/entities/shelter.entity';
 import { SpeciesEntity } from '../species/entities/species.entity';
 import { BreedEntity } from '../breed/entities/breed.entity';
-import { AnimalStatus } from 'src/common/enums/animal.enum';
+import {
+  AnimalGender,
+  AnimalSize,
+  AnimalStatus,
+} from 'src/common/enums/animal.enum';
 
 @Injectable()
 export class AnimalService {
@@ -155,7 +159,77 @@ export class AnimalService {
   async findAll(
     options: FindManyOptions<AnimalEntity> = {},
   ): Promise<AnimalEntity[]> {
+    options.relations = {
+      ...(options.relations || {}),
+      shelter: true,
+      species: true,
+      breed: true,
+    };
     return this.animalRepository.find(options);
+  }
+
+  async findAllWithFilters(
+    query: Record<string, string>,
+  ): Promise<AnimalEntity[]> {
+    const {
+      shelterId,
+      speciesId,
+      breedId,
+      gender,
+      size,
+      color,
+      city,
+      isSterilized,
+      isVaccinated,
+      hasMicrochip,
+      status,
+    } = query;
+
+    const where: FindOptionsWhere<AnimalEntity> = {};
+
+    if (shelterId) where.shelterId = +shelterId;
+    if (speciesId) where.speciesId = +speciesId;
+    if (breedId) where.breedId = +breedId;
+    if (gender) {
+      if (Object.values(AnimalGender).includes(gender as any)) {
+        where.gender = gender as AnimalGender;
+      }
+    }
+    if (size) {
+      if (Object.values(AnimalSize).includes(size as any)) {
+        where.size = size as AnimalSize;
+      }
+    }
+    if (color) where.color = color;
+    if (status) {
+      if (Object.values(AnimalStatus).includes(status as any)) {
+        where.status = status as AnimalStatus;
+      }
+    }
+
+    // booleanos deben convertirse desde string
+    if (isSterilized !== undefined)
+      where.isSterilized = isSterilized === 'true';
+    if (isVaccinated !== undefined)
+      where.isVaccinated = isVaccinated === 'true';
+    if (hasMicrochip !== undefined)
+      where.hasMicrochip = hasMicrochip === 'true';
+
+    // filtro por ciudad (es una relación con shelter)
+    // const relations = ['shelter', 'species', 'breed'];
+
+    const queryBuilder = this.animalRepository
+      .createQueryBuilder('animal')
+      .leftJoinAndSelect('animal.shelter', 'shelter')
+      .leftJoinAndSelect('animal.species', 'species')
+      .leftJoinAndSelect('animal.breed', 'breed')
+      .where(where);
+
+    if (city) {
+      queryBuilder.andWhere('shelter.city ILIKE :city', { city });
+    }
+
+    return queryBuilder.getMany();
   }
 
   async findOne(

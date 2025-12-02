@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   UnauthorizedException,
+  Query,
 } from '@nestjs/common';
 import { AnimalService } from './animal.service';
 import { CreateAnimalDto } from './dto/create-animal.dto';
@@ -33,6 +34,19 @@ export class AnimalController {
   @Get()
   findAll() {
     return this.animalService.findAll();
+  }
+
+  @Get('with-filters')
+  async findAllWithFilters(@Query() query: Record<string, string>) {
+    console.log('Filters query:', query);
+    return this.animalService.findAllWithFilters(query);
+  }
+
+  @Get('of-shelter/:shelterId')
+  findOneOfShelter(@Param('shelterId') shelterId: string) {
+    return this.animalService.findAll({
+      where: { shelterId: +shelterId },
+    });
   }
 
   @Get(':id')

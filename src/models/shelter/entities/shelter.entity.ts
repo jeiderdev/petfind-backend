@@ -27,8 +27,6 @@ export class ShelterEntity {
 
   @Column({ nullable: true })
   city: string;
-  // latitude?: number;
-  // longitude?: number;
 
   @Column({ nullable: true })
   contactEmail: string;
