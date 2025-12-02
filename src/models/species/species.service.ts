@@ -103,6 +103,16 @@ export class SpeciesService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+    let hasChanges = false;
+    for (const key in updateSpeciesDto) {
+      if (updateSpeciesDto[key] !== species[key]) {
+        hasChanges = true;
+        break;
+      }
+    }
+    if (!hasChanges) {
+      return species;
+    }
     Object.assign(species, updateSpeciesDto);
     const res = this.speciesRepository.save(species);
     const admins = await this.userRepository.find({
@@ -131,11 +141,17 @@ export class SpeciesService {
     return res;
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number, userId: number): Promise<void> {
     const species = await this.findOne(id);
     if (!species) {
       throw new NotFoundException('Species not found');
     }
+    console.log(
+      `User with ID ${userId} is attempting to delete species with ID ${id}`,
+    );
+    // TODO:
+    // Validar si la especie tiene razas asociadas antes de eliminar
+    // Enviar notificación a los administradores del sistema sobre la eliminación
     await this.speciesRepository.remove(species);
   }
 }

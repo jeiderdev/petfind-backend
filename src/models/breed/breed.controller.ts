@@ -9,50 +9,48 @@ import {
   Req,
   BadRequestException,
 } from '@nestjs/common';
-import { SpeciesService } from './species.service';
-import { CreateSpeciesDto } from './dto/create-species.dto';
-import { UpdateSpeciesDto } from './dto/update-species.dto';
+import { BreedService } from './breed.service';
+import { CreateBreedDto } from './dto/create-breed.dto';
+import { UpdateBreedDto } from './dto/update-breed.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/auth/decorators/auth.decorator';
-import { getUserFronRequest } from 'src/auth/utils';
 import { SystemRoles } from 'src/common/enums/system-role.enum';
+import { getUserFronRequest } from 'src/auth/utils';
 
-@ApiTags('Species')
+@ApiTags('Breed')
 @ApiBearerAuth()
-@Controller('species')
-export class SpeciesController {
-  constructor(private readonly speciesService: SpeciesService) {}
+@Controller('breed')
+export class BreedController {
+  constructor(private readonly breedService: BreedService) {}
 
   @Auth({ roles: [SystemRoles.ADMIN, SystemRoles.VOLUNTEER] })
   @Post()
-  create(@Body() createSpeciesDto: CreateSpeciesDto, @Req() req: Request) {
+  create(@Body() createBreedDto: CreateBreedDto, @Req() req: Request) {
     const user = getUserFronRequest(req);
     if (!user) throw new BadRequestException('User not found in request');
-    const userId = user.id;
-    return this.speciesService.create(createSpeciesDto, userId);
+    return this.breedService.create(createBreedDto, user.id);
   }
 
   @Get()
   findAll() {
-    return this.speciesService.findAll();
+    return this.breedService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.speciesService.findOne(+id);
+    return this.breedService.findOne(+id);
   }
 
   @Auth({ roles: [SystemRoles.ADMIN, SystemRoles.VOLUNTEER] })
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateSpeciesDto: UpdateSpeciesDto,
+    @Body() updateBreedDto: UpdateBreedDto,
     @Req() req: Request,
   ) {
     const user = getUserFronRequest(req);
     if (!user) throw new BadRequestException('User not found in request');
-    const userId = user.id;
-    return this.speciesService.update(+id, updateSpeciesDto, userId);
+    return this.breedService.update(+id, updateBreedDto, user.id);
   }
 
   @Auth({ roles: [SystemRoles.ADMIN] })
@@ -60,7 +58,6 @@ export class SpeciesController {
   remove(@Param('id') id: string, @Req() req: Request) {
     const user = getUserFronRequest(req);
     if (!user) throw new BadRequestException('User not found in request');
-    const userId = user.id;
-    return this.speciesService.remove(+id, userId);
+    return this.breedService.remove(+id, user.id);
   }
 }
