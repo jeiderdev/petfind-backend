@@ -16,6 +16,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { getUserFronRequest } from 'src/auth/utils';
 import { SystemRoles } from 'src/common/enums/system-role.enum';
+import { RejectShelterDto } from './dto/reject-shelter.dto';
 
 @ApiTags('Shelters')
 @ApiBearerAuth()
@@ -51,6 +52,26 @@ export class ShelterController {
     const user = getUserFronRequest(req);
     if (!user) throw new UnauthorizedException();
     return this.shelterService.update(+id, updateShelterDto, user.id);
+  }
+
+  @Auth({ roles: [SystemRoles.ADMIN] })
+  @Post(':id/approve')
+  approve(@Param('id') id: string, @Req() req: Request) {
+    const user = getUserFronRequest(req);
+    if (!user) throw new UnauthorizedException();
+    return this.shelterService.approve(+id, user.id);
+  }
+
+  @Auth({ roles: [SystemRoles.ADMIN] })
+  @Post(':id/reject')
+  reject(
+    @Param('id') id: string,
+    @Body() rejectShelterDto: RejectShelterDto,
+    @Req() req: Request,
+  ) {
+    const user = getUserFronRequest(req);
+    if (!user) throw new UnauthorizedException();
+    return this.shelterService.reject(+id, rejectShelterDto, user.id);
   }
 
   @Auth({ roles: [SystemRoles.ADMIN] })

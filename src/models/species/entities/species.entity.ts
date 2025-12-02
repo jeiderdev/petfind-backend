@@ -1,3 +1,4 @@
+import { AnimalEntity } from 'src/models/animal/entities/animal.entity';
 import { BreedEntity } from 'src/models/breed/entities/breed.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -30,5 +31,6 @@ export class SpeciesEntity {
   @OneToMany(() => BreedEntity, (breed) => breed.species)
   breeds: BreedEntity[];
 
-  // animals?: Animal[];
+  @OneToMany(() => AnimalEntity, (animal) => animal.species)
+  animals: AnimalEntity[];
 }

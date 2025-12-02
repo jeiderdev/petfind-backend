@@ -12,6 +12,7 @@ import { ShelterModule } from './models/shelter/shelter.module';
 import { ShelterUserModule } from './models/shelter-user/shelter-user.module';
 import { SpeciesModule } from './models/species/species.module';
 import { BreedModule } from './models/breed/breed.module';
+import { AnimalModule } from './models/animal/animal.module';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { BreedModule } from './models/breed/breed.module';
     ShelterUserModule,
     SpeciesModule,
     BreedModule,
+    AnimalModule,
   ],
   controllers: [AppController],
   providers: [AppService],

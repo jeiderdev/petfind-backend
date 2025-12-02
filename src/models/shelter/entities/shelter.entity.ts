@@ -1,4 +1,5 @@
 import { ShelterStatus } from 'src/common/enums/shelter.enum';
+import { AnimalEntity } from 'src/models/animal/entities/animal.entity';
 import { ShelterUserEntity } from 'src/models/shelter-user/entities/shelter-user.entity';
 import { UserEntity } from 'src/models/user/entities/user.entity';
 import {
@@ -75,5 +76,6 @@ export class ShelterEntity {
   @OneToMany(() => ShelterUserEntity, (shelterUser) => shelterUser.shelter)
   members: ShelterUserEntity[];
 
-  // animals?: Animal[];
+  @OneToMany(() => AnimalEntity, (animal) => animal.shelter)
+  animals: AnimalEntity[];
 }

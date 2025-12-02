@@ -10,6 +10,7 @@ import { SystemRoles } from 'src/common/enums/system-role.enum';
 import { ShelterUserService } from '../shelter-user/shelter-user.service';
 import { SmtpService } from 'src/smtp/smtp.service';
 import { SendEmailDto } from 'src/smtp/dtos/send-email.dto';
+import { RejectShelterDto } from './dto/reject-shelter.dto';
 
 @Injectable()
 export class ShelterService {
@@ -139,16 +140,9 @@ export class ShelterService {
     }
     const approver = await this.userRepository.findOne({
       where: { id: approverId },
-      relations: {
-        systemRole: true,
-      },
     });
     if (!approver) {
       throw new BadRequestException(`User with ID ${approverId} not found`);
-    }
-    const isAdmin = approver.systemRole?.name === SystemRoles.ADMIN;
-    if (!isAdmin) {
-      throw new BadRequestException(`Only system admins can approve shelters`);
     }
     shelter.status = ShelterStatus.APPROVED;
     shelter.approvedById = approverId;
@@ -176,6 +170,48 @@ export class ShelterService {
         shelterName: shelter.name,
         supportEmail: this.supportEmail,
         shelterUrl: `${this.frontEndUrl}/shelters/${shelter.id}`,
+        year: new Date().getFullYear(),
+      },
+    };
+    await this.smtpService.sendEmail(sendEmailDto);
+    return res;
+  }
+
+  async reject(
+    id: number,
+    dto: RejectShelterDto,
+    rejectorId: number,
+  ): Promise<ShelterEntity> {
+    const shelter = await this.findOne(id, {
+      relations: {
+        createdBy: true,
+      },
+    });
+    if (!shelter) {
+      throw new BadRequestException(`Shelter with ID ${id} not found`);
+    }
+    const rejector = await this.userRepository.findOne({
+      where: { id: rejectorId },
+    });
+    if (!rejector) {
+      throw new BadRequestException(`User with ID ${rejectorId} not found`);
+    }
+    shelter.status = ShelterStatus.REJECTED;
+    shelter.approvedById = rejectorId;
+    shelter.approvedAt = new Date();
+    shelter.rejectionReason = dto.reason;
+    const res = await this.shelterRepository.save(shelter);
+    const creator = shelter.createdBy;
+    const sendEmailDto: SendEmailDto = {
+      userId: shelter.createdById,
+      email: creator.email,
+      subject: 'Tu refugio ha sido rechazado',
+      template: 'shelter-rejected',
+      context: {
+        userName: creator.firstName + ' ' + creator.lastName,
+        shelterName: shelter.name,
+        rejectionReason: dto.reason,
+        supportEmail: this.supportEmail,
         year: new Date().getFullYear(),
       },
     };

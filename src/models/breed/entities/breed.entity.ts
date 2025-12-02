@@ -1,5 +1,13 @@
+import { AnimalEntity } from 'src/models/animal/entities/animal.entity';
 import { SpeciesEntity } from 'src/models/species/entities/species.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('breeds')
 export class BreedEntity {
@@ -30,7 +38,10 @@ export class BreedEntity {
 
   // Relationships
   @ManyToOne(() => SpeciesEntity, (species) => species.breeds)
+  @JoinColumn({ name: 'speciesId' })
   species: SpeciesEntity;
 
-  // animals?: Animal[];
+  @OneToMany(() => AnimalEntity, (animal) => animal.breed)
+  @JoinColumn({ name: 'breedId' })
+  animals: AnimalEntity[];
 }
