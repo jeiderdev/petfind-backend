@@ -8,7 +8,7 @@ import { CreateAnimalDto } from './dto/create-animal.dto';
 import { UpdateAnimalDto } from './dto/update-animal.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AnimalEntity } from './entities/animal.entity';
-import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsWhere, In, Repository } from 'typeorm';
 import { ShelterUserEntity } from '../shelter-user/entities/shelter-user.entity';
 import { SmtpService } from 'src/smtp/smtp.service';
 import { ShelterRole } from 'src/common/enums/shelter.enum';
@@ -159,18 +159,29 @@ export class AnimalService {
   async findAll(
     options: FindManyOptions<AnimalEntity> = {},
   ): Promise<AnimalEntity[]> {
+    options.where = {
+      ...(options.where || {}),
+      status: In([AnimalStatus.AVAILABLE, AnimalStatus.ADOPTED]),
+    };
     options.relations = {
       ...(options.relations || {}),
       shelter: true,
       species: true,
       breed: true,
     };
+    options.order = {
+      ...(options.order || {}),
+      createdAt: 'DESC',
+    };
     return this.animalRepository.find(options);
   }
 
   async findAllWithFilters(
-    query: Record<string, string>,
+    query: Record<string, string> = {},
   ): Promise<AnimalEntity[]> {
+    if (!query || Object.keys(query).length === 0) {
+      return this.findAll();
+    }
     const {
       shelterId,
       speciesId,
@@ -215,8 +226,9 @@ export class AnimalService {
     if (hasMicrochip !== undefined)
       where.hasMicrochip = hasMicrochip === 'true';
 
-    // filtro por ciudad (es una relación con shelter)
-    // const relations = ['shelter', 'species', 'breed'];
+    where.status = In([AnimalStatus.AVAILABLE, AnimalStatus.ADOPTED]);
+
+    // console.log('Filters where:', where);
 
     const queryBuilder = this.animalRepository
       .createQueryBuilder('animal')
@@ -228,6 +240,7 @@ export class AnimalService {
     if (city) {
       queryBuilder.andWhere('shelter.city ILIKE :city', { city });
     }
+    queryBuilder.orderBy('animal.createdAt', 'DESC');
 
     return queryBuilder.getMany();
   }

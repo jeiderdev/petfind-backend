@@ -32,13 +32,7 @@ export class AnimalController {
   }
 
   @Get()
-  findAll() {
-    return this.animalService.findAll();
-  }
-
-  @Get('with-filters')
-  async findAllWithFilters(@Query() query: Record<string, string>) {
-    console.log('Filters query:', query);
+  findAll(@Query() query: Record<string, string>) {
     return this.animalService.findAllWithFilters(query);
   }
 

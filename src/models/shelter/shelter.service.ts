@@ -15,6 +15,7 @@ import { ShelterUserService } from '../shelter-user/shelter-user.service';
 import { SmtpService } from 'src/smtp/smtp.service';
 import { SendEmailDto } from 'src/smtp/dtos/send-email.dto';
 import { RejectShelterDto } from './dto/reject-shelter.dto';
+import { AnimalService } from '../animal/animal.service';
 
 @Injectable()
 export class ShelterService {
@@ -28,6 +29,7 @@ export class ShelterService {
     private readonly userRepository: Repository<UserEntity>,
     private readonly shelterUserService: ShelterUserService,
     private readonly smtpService: SmtpService,
+    private readonly animalService: AnimalService,
   ) {
     const auxSupportEmail = process.env.SUPPORT_EMAIL;
     const auxFrontEndUrl = process.env.FRONTEND_URL;
@@ -100,6 +102,25 @@ export class ShelterService {
       ...options,
       where: { ...(options.where || {}), id },
     });
+  }
+
+  async findOneWithAnimals(
+    id: number,
+    query: Record<string, string> = {},
+  ): Promise<ShelterEntity | null> {
+    if (!id) throw new BadRequestException('Shelter ID is required');
+    const shelter = await this.shelterRepository.findOne({
+      where: { id },
+    });
+    if (!shelter) {
+      throw new BadRequestException(`Shelter with ID ${id} not found`);
+    }
+    const animals = await this.animalService.findAllWithFilters({
+      ...query,
+      shelterId: String(id),
+    });
+    shelter.animals = animals;
+    return shelter;
   }
 
   async update(

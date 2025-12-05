@@ -7,6 +7,7 @@ import { ShelterEntity } from './entities/shelter.entity';
 import { UserEntity } from '../user/entities/user.entity';
 import { ShelterUserModule } from '../shelter-user/shelter-user.module';
 import { SmtpModule } from 'src/smtp/smtp.module';
+import { AnimalModule } from '../animal/animal.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { SmtpModule } from 'src/smtp/smtp.module';
     TypeOrmModule.forFeature([ShelterEntity, UserEntity]),
     ShelterUserModule,
     SmtpModule,
+    AnimalModule,
   ],
   controllers: [ShelterController],
   providers: [ShelterService],
