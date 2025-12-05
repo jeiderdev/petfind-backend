@@ -49,14 +49,4 @@ export class UserService {
     await this.userRepository.update(id, updateUserDto);
     return this.findOne(id);
   }
-
-  async remove(id: number) {
-    if (!id) throw new BadRequestException('User ID is required for deletion');
-    const user = await this.findOne(id);
-    if (!user) {
-      throw new NotFoundException(`User not found`);
-    }
-    await this.userRepository.delete(id);
-    return { message: `User with ID ${id} has been deleted` };
-  }
 }

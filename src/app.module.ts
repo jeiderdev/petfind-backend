@@ -13,6 +13,7 @@ import { ShelterUserModule } from './models/shelter-user/shelter-user.module';
 import { SpeciesModule } from './models/species/species.module';
 import { BreedModule } from './models/breed/breed.module';
 import { AnimalModule } from './models/animal/animal.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -61,8 +62,7 @@ import { AnimalModule } from './models/animal/animal.module';
           password: dbPassword,
           database: dbName,
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
-          synchronize: true, // Set to false in production
-          // synchronize: false, // Set to false in production
+          synchronize: false, // Set to false in production
         };
       },
       inject: [ConfigService],
@@ -77,6 +77,7 @@ import { AnimalModule } from './models/animal/animal.module';
     SpeciesModule,
     BreedModule,
     AnimalModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

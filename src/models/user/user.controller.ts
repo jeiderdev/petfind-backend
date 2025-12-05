@@ -61,10 +61,4 @@ export class UserController {
       throw new BadRequestException('You can only update your own profile');
     return this.userService.update(+id, updateUserDto);
   }
-
-  @Auth({ roles: [SystemRoles.ADMIN] })
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
-  }
 }

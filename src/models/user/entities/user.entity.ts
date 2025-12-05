@@ -1,10 +1,13 @@
 import { OtpCodeEntity } from 'src/auth/entities/otp-code.entity';
+import { CollectionEntity } from 'src/file/entities/collection.entity';
+import { FileEntity } from 'src/file/entities/file.entity';
 import { AnimalEntity } from 'src/models/animal/entities/animal.entity';
 import { ShelterUserEntity } from 'src/models/shelter-user/entities/shelter-user.entity';
 import { ShelterEntity } from 'src/models/shelter/entities/shelter.entity';
 import { SystemRoleEntity } from 'src/models/system-role/entities/system-role.entity';
 import { EmailEntity } from 'src/smtp/entities/email.entity';
 import {
+  Collection,
   Column,
   Entity,
   ManyToOne,
@@ -78,6 +81,13 @@ export class UserEntity {
 
   @OneToMany(() => AnimalEntity, (animal) => animal.adoptedBy)
   adoptedAnimals: AnimalEntity[];
+
+  @OneToMany(() => FileEntity, (file) => file.user)
+  files: FileEntity[];
+
+  @OneToMany(() => CollectionEntity, (collection) => collection.user)
+  collections: CollectionEntity[];
+
   // notifications?: Notification[];
   // adoptionRequests?: AdoptionRequest[];
   // animalsPublished?: Animal[];
