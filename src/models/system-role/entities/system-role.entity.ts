@@ -7,7 +7,7 @@ export class SystemRoleEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'enum', enum: SystemRoles, unique: true })
+  @Column({ type: 'varchar', length: 20, unique: true })
   name: SystemRoles;
 
   @Column({ type: 'text', nullable: true })

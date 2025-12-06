@@ -7,7 +7,6 @@ import { ShelterEntity } from 'src/models/shelter/entities/shelter.entity';
 import { SystemRoleEntity } from 'src/models/system-role/entities/system-role.entity';
 import { EmailEntity } from 'src/smtp/entities/email.entity';
 import {
-  Collection,
   Column,
   Entity,
   ManyToOne,
@@ -87,8 +86,4 @@ export class UserEntity {
 
   @OneToMany(() => CollectionEntity, (collection) => collection.user)
   collections: CollectionEntity[];
-
-  // notifications?: Notification[];
-  // adoptionRequests?: AdoptionRequest[];
-  // animalsPublished?: Animal[];
 }

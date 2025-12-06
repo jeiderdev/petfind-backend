@@ -20,7 +20,7 @@ export class ShelterUserEntity {
   @Column()
   userId: number;
 
-  @Column({ type: 'enum', enum: ShelterRole })
+  @Column({ type: 'varchar', length: 20 })
   role: ShelterRole;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

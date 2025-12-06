@@ -34,7 +34,7 @@ export class ShelterEntity {
   @Column({ nullable: true })
   contactPhone: string;
 
-  @Column({ type: 'enum', enum: ShelterStatus, default: ShelterStatus.PENDING })
+  @Column({ type: 'varchar', length: 20, default: ShelterStatus.PENDING })
   status: ShelterStatus;
 
   @Column()

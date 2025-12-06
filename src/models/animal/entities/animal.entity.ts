@@ -23,7 +23,7 @@ export class AnimalEntity {
   @Column({ nullable: false })
   shelterId: number;
 
-  @Column({ type: 'enum', enum: AnimalStatus, default: AnimalStatus.PENDING })
+  @Column({ type: 'varchar', length: 20, default: AnimalStatus.PENDING })
   status: AnimalStatus;
 
   @Column()
@@ -35,15 +35,15 @@ export class AnimalEntity {
   @Column({ nullable: true })
   breedId: number;
 
-  @Column({ type: 'enum', enum: AnimalGender, default: AnimalGender.UNKNOWN })
+  @Column({ type: 'varchar', length: 15, default: AnimalGender.UNKNOWN })
   gender: AnimalGender;
 
   @Column({ type: 'date', nullable: true })
   birthDate: Date;
 
-  estimatedAgeMonths: number;
+  estimatedAgeMonths?: number;
 
-  @Column({ type: 'enum', enum: AnimalSize })
+  @Column({ type: 'varchar', length: 15, default: AnimalSize.MEDIUM })
   size: AnimalSize;
 
   @Column({ nullable: true })

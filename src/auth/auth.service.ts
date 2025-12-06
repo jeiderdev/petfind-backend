@@ -105,7 +105,9 @@ export class AuthService {
     });
   }
 
-  async resendEmailOtpCode(resendOtpCode: ResendOtpCodeDto): Promise<string> {
+  async resendEmailOtpCode(
+    resendOtpCode: ResendOtpCodeDto,
+  ): Promise<Record<string, string>> {
     const { email } = resendOtpCode;
     const user = await this.userRepository.findOne({
       where: { email },
@@ -114,7 +116,7 @@ export class AuthService {
       throw new BadRequestException('User not found');
     }
     await this.generateAndSendEmailOtpCode(user.id);
-    return 'OTP code sent successfully';
+    return { message: 'OTP code sent successfully' };
   }
 
   async signUp(signUpDto: SignupDto): Promise<UserEntity> {
@@ -179,7 +181,9 @@ export class AuthService {
     return user;
   }
 
-  async validateOtpCode(dto: ValidateOtpCodeDto): Promise<string> {
+  async validateOtpCode(
+    dto: ValidateOtpCodeDto,
+  ): Promise<Record<string, string>> {
     const { email, code } = dto;
     const user = await this.userRepository.findOne({
       where: { email },
@@ -212,6 +216,6 @@ export class AuthService {
     await this.OtpCodeRepository.save(otpRecord);
     user.isVerified = true;
     await this.userRepository.save(user);
-    return this.generateUserJwtToken(user.id);
+    return { message: 'Cuenta validad exitosamente' };
   }
 }
