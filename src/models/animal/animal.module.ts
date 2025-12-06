@@ -9,11 +9,13 @@ import { SmtpModule } from 'src/smtp/smtp.module';
 import { ShelterEntity } from '../shelter/entities/shelter.entity';
 import { SpeciesEntity } from '../species/entities/species.entity';
 import { BreedEntity } from '../breed/entities/breed.entity';
+import { AnimalImageEntity } from './entities/animal-image.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       AnimalEntity,
+      AnimalImageEntity,
       ShelterEntity,
       ShelterUserEntity,
       SpeciesEntity,

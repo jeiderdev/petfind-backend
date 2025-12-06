@@ -18,6 +18,10 @@ import { Auth } from 'src/auth/decorators/auth.decorator';
 import { getUserFronRequest } from 'src/auth/utils';
 import { SystemRoles } from 'src/common/enums/system-role.enum';
 import { RejectShelterDto } from './dto/reject-shelter.dto';
+import { CretaeShelterImageDto } from './dto/create-shelter-image.dto';
+import { FindManyOptions } from 'typeorm';
+import { ShelterEntity } from './entities/shelter.entity';
+import { ShelterStatus } from 'src/common/enums/shelter.enum';
 
 @ApiTags('Shelters')
 @ApiBearerAuth()
@@ -33,14 +37,35 @@ export class ShelterController {
     return this.shelterService.create(createShelterDto, user.id);
   }
 
+  @Auth()
   @Get()
-  findAll() {
-    return this.shelterService.findAll();
+  findAll(@Req() req: Request) {
+    const user = getUserFronRequest(req);
+    if (!user) throw new UnauthorizedException();
+    const options: FindManyOptions<ShelterEntity> = {};
+    if (user.role !== String(SystemRoles.ADMIN)) {
+      options.where = [
+        { status: ShelterStatus.APPROVED },
+        { createdById: user.id },
+      ];
+    }
+    return this.shelterService.findAll(options);
   }
 
+  @Auth()
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.shelterService.findOne(+id);
+  findOne(@Param('id') id: string, @Req() req: Request) {
+    const user = getUserFronRequest(req);
+    if (!user) throw new UnauthorizedException();
+    return this.shelterService.findOne(
+      +id,
+      {
+        relations: {
+          images: true,
+        },
+      },
+      user.id,
+    );
   }
 
   @Auth()
@@ -78,6 +103,18 @@ export class ShelterController {
     const user = getUserFronRequest(req);
     if (!user) throw new UnauthorizedException();
     return this.shelterService.reject(+id, rejectShelterDto, user.id);
+  }
+
+  @Auth()
+  @Post(':id/image')
+  addImage(
+    @Param('id') id: string,
+    @Body() dto: CretaeShelterImageDto,
+    @Req() req: Request,
+  ) {
+    const user = getUserFronRequest(req);
+    if (!user) throw new UnauthorizedException();
+    return this.shelterService.addImage(+id, dto.image, user.id);
   }
 
   @Auth()

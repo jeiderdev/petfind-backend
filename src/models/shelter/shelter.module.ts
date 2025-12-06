@@ -8,11 +8,12 @@ import { UserEntity } from '../user/entities/user.entity';
 import { ShelterUserModule } from '../shelter-user/shelter-user.module';
 import { SmtpModule } from 'src/smtp/smtp.module';
 import { AnimalModule } from '../animal/animal.module';
+import { ShelterImageEntity } from './entities/shelter-image.entity';
 
 @Module({
   imports: [
     AuthModule,
-    TypeOrmModule.forFeature([ShelterEntity, UserEntity]),
+    TypeOrmModule.forFeature([ShelterEntity, ShelterImageEntity, UserEntity]),
     ShelterUserModule,
     SmtpModule,
     AnimalModule,

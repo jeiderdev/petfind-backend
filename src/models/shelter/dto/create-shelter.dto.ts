@@ -14,9 +14,6 @@ export class CreateShelterDto {
   @IsString()
   city: string;
 
-  // latitude?: number;
-  // longitude?: number;
-
   @IsString()
   contactEmail: string;
 

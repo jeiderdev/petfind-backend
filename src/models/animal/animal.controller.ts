@@ -5,7 +5,6 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   Req,
   UnauthorizedException,
   Query,
@@ -16,6 +15,7 @@ import { UpdateAnimalDto } from './dto/update-animal.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { getUserFronRequest } from 'src/auth/utils';
+import { CreateAnimalImageDto } from './dto/create-animal-image.dto';
 
 @ApiTags('Animals')
 @ApiBearerAuth()
@@ -36,13 +36,6 @@ export class AnimalController {
     return this.animalService.findAllWithFilters(query);
   }
 
-  @Get('of-shelter/:shelterId')
-  findOneOfShelter(@Param('shelterId') shelterId: string) {
-    return this.animalService.findAll({
-      where: { shelterId: +shelterId },
-    });
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.animalService.findOne(+id);
@@ -61,10 +54,22 @@ export class AnimalController {
   }
 
   @Auth()
-  @Delete(':id')
-  remove(@Param('id') id: string, @Req() req: Request) {
+  @Post(':id/image')
+  addImage(
+    @Param('id') id: string,
+    @Body() dto: CreateAnimalImageDto,
+    @Req() req: Request,
+  ) {
     const user = getUserFronRequest(req);
     if (!user) throw new UnauthorizedException();
-    return this.animalService.remove(+id, user.id);
+    return this.animalService.addImage(+id, dto.image, user.id);
+  }
+
+  @Auth()
+  @Post(':id/publicate')
+  publicate(@Param('id') id: string, @Req() req: Request) {
+    const user = getUserFronRequest(req);
+    if (!user) throw new UnauthorizedException();
+    return this.animalService.publicate(+id, user.id);
   }
 }

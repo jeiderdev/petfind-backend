@@ -41,7 +41,7 @@ export class UserEntity {
   password: string;
 
   @Column({ nullable: true })
-  avatarUrl?: string;
+  image: string;
 
   @Column({ default: true })
   isActive: boolean;

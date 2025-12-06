@@ -2,8 +2,10 @@ import { SystemRoles } from 'src/common/enums/system-role.enum';
 
 export interface UserPayload {
   id: number;
+  name: string;
   email: string;
   role: string;
+  image?: string;
   [key: string]: unknown;
 }
 
@@ -16,7 +18,9 @@ export function isUserPayload(obj: unknown): obj is UserPayload {
     'email' in obj &&
     typeof obj.email === 'string' &&
     'role' in obj &&
-    typeof obj.role === 'string'
+    typeof obj.role === 'string' &&
+    'name' in obj &&
+    typeof obj.name === 'string'
   );
 }
 

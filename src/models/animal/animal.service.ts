@@ -21,6 +21,8 @@ import {
   AnimalSize,
   AnimalStatus,
 } from 'src/common/enums/animal.enum';
+import { AnimalImageEntity } from './entities/animal-image.entity';
+import { SystemRoles } from 'src/common/enums/system-role.enum';
 
 @Injectable()
 export class AnimalService {
@@ -29,6 +31,8 @@ export class AnimalService {
   constructor(
     @InjectRepository(AnimalEntity)
     private readonly animalRepository: Repository<AnimalEntity>,
+    @InjectRepository(AnimalImageEntity)
+    private readonly animalImageRepository: Repository<AnimalImageEntity>,
     @InjectRepository(ShelterEntity)
     private readonly shelterRepository: Repository<ShelterEntity>,
     @InjectRepository(ShelterUserEntity)
@@ -53,8 +57,13 @@ export class AnimalService {
     if (!userId || !shelterId) return false;
     const shelterUser = await this.shelterUserRepository.findOne({
       where: { shelterId, userId },
+      relations: { user: { systemRole: true } },
     });
     if (!shelterUser) return false;
+    const systemRole = shelterUser.user.systemRole;
+    if (systemRole && systemRole.name === SystemRoles.ADMIN) {
+      return true;
+    }
     const role = shelterUser.role;
     return (
       role === ShelterRole.OWNER ||
@@ -70,8 +79,13 @@ export class AnimalService {
     if (!userId || !shelterId) return false;
     const shelterUser = await this.shelterUserRepository.findOne({
       where: { shelterId, userId },
+      relations: { user: { systemRole: true } },
     });
     if (!shelterUser) return false;
+    const systemRole = shelterUser.user.systemRole;
+    if (systemRole && systemRole.name === SystemRoles.ADMIN) {
+      return true;
+    }
     const role = shelterUser.role;
     return role === ShelterRole.OWNER || role === ShelterRole.DIRECTIVE;
   }
@@ -156,6 +170,32 @@ export class AnimalService {
     return res;
   }
 
+  async addImage(
+    animalId: number,
+    image: string,
+    userId: number,
+  ): Promise<AnimalImageEntity> {
+    const animal = await this.findOne(animalId);
+    if (!animal) {
+      throw new NotFoundException('Animal not found');
+    }
+    const hasPermission = await this.hasPermissionToManageAnimalsInfo(
+      animal.shelterId,
+      userId,
+    );
+    if (!hasPermission) {
+      throw new UnauthorizedException(
+        'Only shelter members, directive, or owners can add images to animals',
+      );
+    }
+    const animalImage = this.animalImageRepository.create({
+      animalId,
+      image,
+      uploadedById: userId,
+    });
+    return this.animalImageRepository.save(animalImage);
+  }
+
   async findAll(
     options: FindManyOptions<AnimalEntity> = {},
   ): Promise<AnimalEntity[]> {
@@ -235,6 +275,7 @@ export class AnimalService {
       .leftJoinAndSelect('animal.shelter', 'shelter')
       .leftJoinAndSelect('animal.species', 'species')
       .leftJoinAndSelect('animal.breed', 'breed')
+      .leftJoinAndSelect('animal.images', 'images')
       .where(where);
 
     if (city) {
@@ -255,6 +296,13 @@ export class AnimalService {
     return this.animalRepository.findOne({
       ...options,
       where: { ...(options.where || {}), id },
+      relations: {
+        ...(options.relations || {}),
+        shelter: true,
+        species: true,
+        breed: true,
+        images: true,
+      },
     });
   }
 
@@ -386,25 +434,5 @@ export class AnimalService {
       }),
     );
     return res;
-  }
-
-  async remove(id: number, userId: number): Promise<void> {
-    const animal = await this.findOne(id);
-    if (!animal) {
-      throw new NotFoundException('Animal not found');
-    }
-    const userInfo = await this.shelterUserRepository.findOne({
-      where: { userId, shelterId: animal.shelterId },
-      relations: { user: true },
-    });
-    if (!userInfo) {
-      throw new NotFoundException(
-        'User is not associated with the specified shelter',
-      );
-    }
-    // TODO
-    // Verify if there are pending adoption requests before deleting
-    // Send notification emails if necessary
-    // await this.animalRepository.remove(animal);
   }
 }

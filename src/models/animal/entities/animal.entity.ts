@@ -12,8 +12,10 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { AnimalImageEntity } from './animal-image.entity';
 
 @Entity('animals')
 export class AnimalEntity {
@@ -102,6 +104,11 @@ export class AnimalEntity {
   })
   @JoinColumn({ name: 'adoptedById' })
   adoptedBy: UserEntity;
+
+  @OneToMany(() => AnimalImageEntity, (image) => image.animal, {
+    cascade: true,
+  })
+  images: AnimalImageEntity[];
 
   // adoptionRequests?: AdoptionRequest[];
 }

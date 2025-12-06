@@ -17,6 +17,7 @@ import { EncryptionService } from 'src/security/encryption.service';
 import { SmtpService } from 'src/smtp/smtp.service';
 import { ValidateOtpCodeDto } from './dto/validate-otp-code.dto';
 import { ResendOtpCodeDto } from './dto/resend-otp-code.dto';
+import { SystemRoles } from 'src/common/enums/system-role.enum';
 
 @Injectable()
 export class AuthService {
@@ -60,8 +61,10 @@ export class AuthService {
     }
     const payload: UserPayload = {
       id: user.id,
+      name: user.firstName + ' ' + user.lastName,
       email: user.email,
       role: user.systemRole.name,
+      image: user.image,
     };
     return await this.generateJwtToken(payload);
   }
@@ -127,21 +130,37 @@ export class AuthService {
     if (existingUser) {
       throw new BadRequestException('User already exists');
     }
-    const defaultSystemRole = await this.systemRoleRepository.findOne({
-      where: { name: DEFAULT_SYSTEM_ROLE },
-    });
-    if (!defaultSystemRole) {
-      throw new BadRequestException(
-        `Default system role '${DEFAULT_SYSTEM_ROLE}' not found`,
-      );
-    }
     const passwordHash = await this.hashPassword(password);
     const newUser = this.userRepository.create({
       ...signUpDto,
       password: passwordHash,
-      systemRoleId: defaultSystemRole.id,
       isVerified: false,
     });
+    const auxUser = await this.userRepository.findOne({
+      where: { systemRole: { name: SystemRoles.ADMIN } },
+      relations: { systemRole: true },
+    });
+    if (auxUser) {
+      const defaultSystemRole = await this.systemRoleRepository.findOne({
+        where: { name: DEFAULT_SYSTEM_ROLE },
+      });
+      if (!defaultSystemRole) {
+        throw new BadRequestException(
+          `Default system role '${DEFAULT_SYSTEM_ROLE}' not found`,
+        );
+      }
+      newUser.systemRole = defaultSystemRole;
+    } else {
+      const adminSystemRole = await this.systemRoleRepository.findOne({
+        where: { name: SystemRoles.ADMIN },
+      });
+      if (!adminSystemRole) {
+        throw new BadRequestException(
+          `System role '${SystemRoles.ADMIN}' not found`,
+        );
+      }
+      newUser.systemRole = adminSystemRole;
+    }
     await this.userRepository.save(newUser);
     await this.generateAndSendEmailOtpCode(newUser.id);
     return newUser;
@@ -166,19 +185,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid user credentials');
     }
     return this.generateUserJwtToken(user.id);
-  }
-
-  async getUserProfile(userId: number): Promise<UserEntity> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: {
-        systemRole: true,
-      },
-    });
-    if (!user) {
-      throw new BadRequestException('User not found');
-    }
-    return user;
   }
 
   async validateOtpCode(

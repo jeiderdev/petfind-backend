@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateShelterDto } from './dto/create-shelter.dto';
@@ -16,6 +17,8 @@ import { SmtpService } from 'src/smtp/smtp.service';
 import { SendEmailDto } from 'src/smtp/dtos/send-email.dto';
 import { RejectShelterDto } from './dto/reject-shelter.dto';
 import { AnimalService } from '../animal/animal.service';
+import { ShelterImageEntity } from './entities/shelter-image.entity';
+import { AnimalStatus } from 'src/common/enums/animal.enum';
 
 @Injectable()
 export class ShelterService {
@@ -25,6 +28,8 @@ export class ShelterService {
   constructor(
     @InjectRepository(ShelterEntity)
     private readonly shelterRepository: Repository<ShelterEntity>,
+    @InjectRepository(ShelterImageEntity)
+    private readonly shelterImageRepository: Repository<ShelterImageEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly shelterUserService: ShelterUserService,
@@ -96,11 +101,32 @@ export class ShelterService {
   async findOne(
     id: number,
     options: FindManyOptions<ShelterEntity> = {},
+    userId?: number,
   ): Promise<ShelterEntity | null> {
     if (!id) throw new BadRequestException('Shelter ID is required');
+    if (userId) {
+      const hasPermission =
+        await this.shelterUserService.hasPermissionToManageMembers(id, userId);
+      if (!hasPermission) {
+        options.where = {
+          ...(options.where || {}),
+          animals: {
+            status: AnimalStatus.AVAILABLE,
+          },
+        };
+      }
+    }
     return this.shelterRepository.findOne({
       ...options,
-      where: { ...(options.where || {}), id },
+      where: {
+        ...(options.where || {}),
+        id,
+      },
+      relations: {
+        ...(options.relations || {}),
+        images: true,
+        animals: true,
+      },
     });
   }
 
@@ -174,12 +200,12 @@ export class ShelterService {
     shelter.approvedAt = new Date();
     const res = await this.shelterRepository.save(shelter);
     try {
-      const ownerRoleDto = {
+      const ownerShelterDto = {
         shelterId: shelter.id,
-        userId: approverId,
+        userEmail: shelter.createdBy.email,
         role: ShelterRole.OWNER,
       };
-      await this.shelterUserService.create(ownerRoleDto, approverId);
+      await this.shelterUserService.create(ownerShelterDto, approverId);
     } catch (error) {
       // Log error but do not block the approval process
       console.error('Error assigning OWNER role to approver:', error);
@@ -242,6 +268,33 @@ export class ShelterService {
     };
     await this.smtpService.sendEmail(sendEmailDto);
     return res;
+  }
+
+  async addImage(
+    shelterId: number,
+    image: string,
+    userId: number,
+  ): Promise<ShelterImageEntity> {
+    const shelter = await this.findOne(shelterId);
+    if (!shelter) {
+      throw new NotFoundException('Shelter not found');
+    }
+    const hasPermission =
+      await this.shelterUserService.hasPermissionToManageMembers(
+        shelterId,
+        userId,
+      );
+    if (!hasPermission) {
+      throw new UnauthorizedException(
+        `You do not have permission to add images to shelter ID ${shelterId}`,
+      );
+    }
+    const shelterImage = this.shelterImageRepository.create({
+      shelterId,
+      image,
+      uploadedById: userId,
+    });
+    return this.shelterImageRepository.save(shelterImage);
   }
 
   async getShelterMembers(

@@ -23,5 +23,5 @@ export class SignupDto {
 
   @IsOptional()
   @IsString()
-  avatarUrl?: string;
+  image?: string;
 }

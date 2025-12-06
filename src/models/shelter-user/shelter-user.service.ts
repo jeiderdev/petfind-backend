@@ -41,7 +41,7 @@ export class ShelterUserService {
   }
 
   async create(createShelterUserDto: CreateShelterUserDto, userId: number) {
-    const { shelterId } = createShelterUserDto;
+    const { shelterId, userEmail } = createShelterUserDto;
     const hasPermission = await this.hasPermissionToManageMembers(
       shelterId,
       userId,
@@ -51,8 +51,15 @@ export class ShelterUserService {
         'Only shelter admins or system admins can add shelter users',
       );
     }
+    const user = await this.userRepository.findOne({
+      where: { email: userEmail },
+    });
+    if (!user) {
+      throw new BadRequestException('User with provided email not found');
+    }
     const shelterUser = this.shelterUserRepository.create({
       ...createShelterUserDto,
+      userId: user.id,
     });
     return this.shelterUserRepository.save(shelterUser);
   }

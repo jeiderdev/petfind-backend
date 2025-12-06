@@ -10,6 +10,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ShelterImageEntity } from './shelter-image.entity';
 
 @Entity('shelters')
 export class ShelterEntity {
@@ -24,6 +25,9 @@ export class ShelterEntity {
 
   @Column({ nullable: true })
   address: string;
+
+  @Column({ nullable: true })
+  image: string;
 
   @Column({ nullable: true })
   city: string;
@@ -76,4 +80,7 @@ export class ShelterEntity {
 
   @OneToMany(() => AnimalEntity, (animal) => animal.shelter)
   animals: AnimalEntity[];
+
+  @OneToMany(() => ShelterImageEntity, (image) => image.shelter)
+  images: ShelterImageEntity[];
 }

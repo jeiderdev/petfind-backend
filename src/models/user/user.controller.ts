@@ -5,7 +5,6 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   Req,
   BadRequestException,
 } from '@nestjs/common';
@@ -39,7 +38,14 @@ export class UserController {
   findMe(@Req() req: Request) {
     const user = getUserFronRequest(req);
     if (!user) throw new BadRequestException('User not found in request');
-    return this.userService.findOne(user.id);
+    return this.userService.findOne(user.id, {
+      relations: {
+        systemRole: true,
+        sheltersCreated: true,
+        sheltersApproved: true,
+        adoptedAnimals: true,
+      },
+    });
   }
 
   @Auth({ roles: [SystemRoles.ADMIN] })
