@@ -271,16 +271,16 @@ export class ShelterService {
     if (!shelter) {
       throw new NotFoundException('Shelter not found');
     }
-    const hasPermission =
-      await this.shelterUserService.hasPermissionToManageMembers(
-        shelterId,
-        userId,
-      );
-    if (!hasPermission) {
-      throw new UnauthorizedException(
-        `You do not have permission to add images to shelter ID ${shelterId}`,
-      );
-    }
+    // const hasPermission =
+    //   await this.shelterUserService.hasPermissionToManageMembers(
+    //     shelterId,
+    //     userId,
+    //   );
+    // if (!hasPermission) {
+    //   throw new UnauthorizedException(
+    //     `You do not have permission to add images to shelter ID ${shelterId}`,
+    //   );
+    // }
     const shelterImage = this.shelterImageRepository.create({
       shelterId,
       image,
