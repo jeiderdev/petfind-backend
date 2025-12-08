@@ -8,6 +8,10 @@ export class CreateShelterDto {
   @IsString()
   description?: string;
 
+  @IsOptional()
+  @IsString()
+  image: string;
+
   @IsString()
   address: string;
 

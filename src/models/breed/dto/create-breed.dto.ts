@@ -13,5 +13,5 @@ export class CreateBreedDto {
 
   @IsOptional()
   @IsUrl()
-  imageUrl: string;
+  image: string;
 }

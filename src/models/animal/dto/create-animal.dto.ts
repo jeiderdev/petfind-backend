@@ -1,27 +1,22 @@
 import {
   IsBoolean,
-  IsDate,
+  IsDateString,
   IsEnum,
   IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
-import {
-  AnimalGender,
-  AnimalSize,
-  AnimalStatus,
-} from 'src/common/enums/animal.enum';
+import { AnimalGender, AnimalSize } from 'src/common/enums/animal.enum';
 
 export class CreateAnimalDto {
   @IsNumber()
   shelterId: number;
 
-  @IsOptional()
-  @IsEnum(AnimalStatus)
-  status: AnimalStatus;
-
   @IsString()
   name: string;
+
+  @IsString()
+  image: string;
 
   @IsNumber()
   speciesId: number;
@@ -33,33 +28,29 @@ export class CreateAnimalDto {
   @IsEnum(AnimalGender)
   gender: AnimalGender;
 
-  @IsDate()
+  @IsDateString()
   birthDate: Date;
 
   @IsEnum(AnimalSize)
   size: AnimalSize;
 
   @IsOptional()
-  @IsString()
-  color: string;
+  @IsBoolean()
+  isSterilized?: boolean;
 
   @IsOptional()
   @IsBoolean()
-  isSterilized: boolean;
+  isVaccinated?: boolean;
 
   @IsOptional()
   @IsBoolean()
-  isVaccinated: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  hasMicrochip: boolean;
+  hasMicrochip?: boolean;
 
   @IsOptional()
   @IsString()
-  description: string;
+  description?: string;
 
   @IsOptional()
   @IsString()
-  healthNotes: string;
+  healthNotes?: string;
 }

@@ -43,7 +43,17 @@ export class UserController {
         systemRole: true,
         sheltersCreated: true,
         sheltersApproved: true,
-        adoptedAnimals: true,
+        adoptedAnimals: {
+          species: true,
+          breed: true,
+        },
+        adoptionRequests: {
+          animal: {
+            species: true,
+            breed: true,
+          },
+          shelter: true,
+        },
       },
     });
   }

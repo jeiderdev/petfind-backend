@@ -31,9 +31,46 @@ export class AnimalController {
     return this.animalService.create(createAnimalDto, user.id);
   }
 
+  @Auth()
   @Get()
-  findAll(@Query() query: Record<string, string>) {
-    return this.animalService.findAllWithFilters(query);
+  findAll(@Query() query: Record<string, string>, @Req() req: Request) {
+    const user = getUserFronRequest(req);
+    if (!user) throw new UnauthorizedException();
+    return this.animalService.findAllWithFilters(query, user.id);
+  }
+
+  @Auth()
+  @Get('can-manage-adoptions/:shelterId')
+  async canManageAdoptions(
+    @Param('shelterId') shelterId: string,
+    @Req() req: Request,
+  ) {
+    const user = getUserFronRequest(req);
+    if (!user) throw new UnauthorizedException();
+    const res = await this.animalService.hasPermissionToManageAdoptions(
+      +shelterId,
+      user.id,
+    );
+    return {
+      hasPermission: res,
+    };
+  }
+
+  @Auth()
+  @Get('can-edit-animal/:shelterId')
+  async canEditAnimal(
+    @Param('shelterId') shelterId: string,
+    @Req() req: Request,
+  ) {
+    const user = getUserFronRequest(req);
+    if (!user) throw new UnauthorizedException();
+    const res = await this.animalService.hasPermissionToManageAnimalsInfo(
+      +shelterId,
+      user.id,
+    );
+    return {
+      hasPermission: res,
+    };
   }
 
   @Get(':id')

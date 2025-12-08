@@ -52,20 +52,17 @@ export class ShelterController {
     return this.shelterService.findAll(options);
   }
 
+  @Get('list-for-filters')
+  listForFilters() {
+    return this.shelterService.listForFilters();
+  }
+
   @Auth()
   @Get(':id')
   findOne(@Param('id') id: string, @Req() req: Request) {
     const user = getUserFronRequest(req);
     if (!user) throw new UnauthorizedException();
-    return this.shelterService.findOne(
-      +id,
-      {
-        relations: {
-          images: true,
-        },
-      },
-      user.id,
-    );
+    return this.shelterService.findOne(+id);
   }
 
   @Auth()

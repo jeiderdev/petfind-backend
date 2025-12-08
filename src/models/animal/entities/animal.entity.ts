@@ -16,6 +16,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { AnimalImageEntity } from './animal-image.entity';
+import { AdoptionRequestEntity } from 'src/models/adoption-request/entities/adoption-request.entity';
 
 @Entity('animals')
 export class AnimalEntity {
@@ -25,7 +26,7 @@ export class AnimalEntity {
   @Column({ nullable: false })
   shelterId: number;
 
-  @Column({ type: 'varchar', length: 20, default: AnimalStatus.PENDING })
+  @Column({ type: 'varchar', length: 20, default: AnimalStatus.NOT_AVAILABLE })
   status: AnimalStatus;
 
   @Column()
@@ -36,6 +37,9 @@ export class AnimalEntity {
 
   @Column({ nullable: true })
   breedId: number;
+
+  @Column()
+  image: string;
 
   @Column({ type: 'varchar', length: 15, default: AnimalGender.UNKNOWN })
   gender: AnimalGender;
@@ -110,5 +114,6 @@ export class AnimalEntity {
   })
   images: AnimalImageEntity[];
 
-  // adoptionRequests?: AdoptionRequest[];
+  @OneToMany(() => AdoptionRequestEntity, (ar) => ar.animal)
+  adoptionRequests: AdoptionRequestEntity[];
 }

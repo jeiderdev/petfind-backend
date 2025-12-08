@@ -44,6 +44,35 @@ export class ShelterUserController {
   }
 
   @Auth()
+  @Get('me')
+  findMyShelterUsers(@Req() req: Request) {
+    const user = getUserFronRequest(req);
+    if (!user) {
+      throw new UnauthorizedException('User not found in request');
+    }
+    return this.shelterUserService.findAll({
+      where: { userId: user.id },
+      relations: { shelter: true, user: true },
+    });
+  }
+
+  @Auth()
+  @Get('of-shelter/:shelterId')
+  findAllByShelter(@Param('shelterId') shelterId: string, @Req() req: Request) {
+    const user = getUserFronRequest(req);
+    if (!user) {
+      throw new UnauthorizedException('User not found in request');
+    }
+    return this.shelterUserService.findAllByShelterId(
+      +shelterId,
+      {
+        relations: { shelter: true, user: true },
+      },
+      user.id,
+    );
+  }
+
+  @Auth()
   @Get(':id')
   async findOne(@Param('id') id: string, @Req() req: Request) {
     const user = getUserFronRequest(req);

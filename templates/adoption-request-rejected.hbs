@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Solicitud de adopción rechazada - PetFind</title>
+  <style>
+    body {
+      background-color: #f7f7f7;
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 0;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 550px;
+      margin: 40px auto;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 30px 40px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      color: #333333;
+      text-align: center;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .info-box {
+      background: #fdeeee;
+      padding: 18px;
+      border-radius: 10px;
+      margin: 25px 0;
+      color: #9a2e2e;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    p {
+      font-size: 15px;
+      line-height: 1.5;
+      color: #555555;
+    }
+
+    .footer {
+      margin-top: 35px;
+      font-size: 13px;
+      text-align: center;
+      color: #888888;
+    }
+
+    .info-title {
+      font-weight: bold;
+      color: #8a1f1f;
+    }
+
+    .section-title {
+      font-weight: bold;
+      margin-top: 10px;
+      color: #701616;
+      font-size: 16px;
+    }
+
+    .highlight {
+      color: #b42323;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="logo">
+      <img src="https://img.icons8.com/emoji/96/dog-face.png" width="70" alt="PetFind Logo" />
+      <h1>Solicitud de adopción no aprobada</h1>
+    </div>
+
+    <p>Hola {{userName}},</p>
+
+    <p>
+      Gracias por tu interés en adoptar. Tras la revisión de tu solicitud por parte del refugio
+      <strong>{{shelterName}}</strong>, lamentamos informarte que en esta ocasión tu solicitud ha sido
+      <span class="highlight">RECHAZADA</span>.
+    </p>
+
+    <div class="info-box">
+      <p class="section-title">Información del animal</p>
+      <p><span class="info-title">Nombre:</span> {{animalName}}</p>
+      <p><span class="info-title">Especie:</span> {{speciesName}}</p>
+      <p><span class="info-title">Raza:</span> {{breedName}}</p>
+
+      <p class="section-title">Detalles de la solicitud</p>
+      <p><span class="info-title">Fecha de evaluación:</span> {{rejectionDate}}</p>
+      <p><span class="info-title">Estado:</span> Rechazada</p>
+    </div>
+
+    <p>
+      Esta decisión se ha tomado teniendo en cuenta los criterios del refugio y el bienestar del animal.
+      Te animamos a seguir explorando otras oportunidades de adopción disponibles en PetFind.
+    </p>
+
+    <p>
+      Agradecemos sinceramente tu interés y tu disposición para brindar un hogar. 💛
+    </p>
+
+    <div class="footer">
+      ¿Tienes dudas? Escríbenos a <strong>{{supportEmail}}</strong><br>
+      PetFind © {{year}} — Todos los derechos reservados.
+    </div>
+
+  </div>
+</body>
+</html>

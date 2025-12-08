@@ -51,7 +51,7 @@ export class BreedService {
     const newBreed = this.breedRepository.create({
       ...createBreedDto,
     });
-    const res = this.breedRepository.save(newBreed);
+    const res = await this.breedRepository.save(newBreed);
 
     const admins = await this.userRepository.find({
       where: { systemRole: { name: SystemRoles.ADMIN } },
@@ -70,7 +70,7 @@ export class BreedService {
             breedDescription: newBreed.description || 'No description provided',
             createdBy: user.firstName + ' ' + user.lastName,
             userEmail: user.email,
-            createdAt: newBreed.createdAt,
+            createdAt: res.createdAt,
             year: new Date().getFullYear(),
           },
         };

@@ -24,7 +24,7 @@ export class BreedEntity {
   description: string;
 
   @Column({ type: 'text', nullable: true })
-  imageUrl: string;
+  image: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

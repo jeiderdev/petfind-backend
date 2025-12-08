@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Solicitud de adopción aprobada - PetFind</title>
+  <style>
+    body {
+      background-color: #f7f7f7;
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 0;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 550px;
+      margin: 40px auto;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 30px 40px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      color: #333333;
+      text-align: center;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .info-box {
+      background: #e9f7f0;
+      padding: 18px;
+      border-radius: 10px;
+      margin: 25px 0;
+      color: #1f7a55;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    p {
+      font-size: 15px;
+      line-height: 1.5;
+      color: #555555;
+    }
+
+    .footer {
+      margin-top: 35px;
+      font-size: 13px;
+      text-align: center;
+      color: #888888;
+    }
+
+    .info-title {
+      font-weight: bold;
+      color: #166947;
+    }
+
+    .section-title {
+      font-weight: bold;
+      margin-top: 10px;
+      color: #0f5a3c;
+      font-size: 16px;
+    }
+
+    .highlight {
+      color: #0f8a5f;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="logo">
+      <img src="https://img.icons8.com/emoji/96/dog-face.png" width="70" alt="PetFind Logo" />
+      <h1>¡Solicitud de adopción aprobada! 🎉</h1>
+    </div>
+
+    <p>Hola {{userName}},</p>
+
+    <p>
+      Nos alegra informarte que tu solicitud de adopción ha sido
+      <span class="highlight">APROBADA</span> por el refugio
+      <strong>{{shelterName}}</strong>.
+    </p>
+
+    <div class="info-box">
+      <p class="section-title">Información del animal</p>
+      <p><span class="info-title">Nombre:</span> {{animalName}}</p>
+      <p><span class="info-title">Especie:</span> {{speciesName}}</p>
+      <p><span class="info-title">Raza:</span> {{breedName}}</p>
+
+      <p class="section-title">Detalles de la adopción</p>
+      <p><span class="info-title">Fecha de aprobación:</span> {{approvalDate}}</p>
+      <p><span class="info-title">Estado:</span> Aprobada</p>
+    </div>
+
+    <p>
+      En breve el equipo del refugio se pondrá en contacto contigo para coordinar
+      la entrega del animal y completar el proceso de adopción.
+    </p>
+
+    <p>
+      ¡Gracias por darle una segunda oportunidad a una vida! 💚
+    </p>
+
+    <div class="footer">
+      ¿Tienes dudas? Escríbenos a <strong>{{supportEmail}}</strong><br>
+      PetFind © {{year}} — Todos los derechos reservados.
+    </div>
+
+  </div>
+</body>
+</html>

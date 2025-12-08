@@ -11,6 +11,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ShelterImageEntity } from './shelter-image.entity';
+import { AdoptionRequestEntity } from 'src/models/adoption-request/entities/adoption-request.entity';
 
 @Entity('shelters')
 export class ShelterEntity {
@@ -83,4 +84,7 @@ export class ShelterEntity {
 
   @OneToMany(() => ShelterImageEntity, (image) => image.shelter)
   images: ShelterImageEntity[];
+
+  @OneToMany(() => AdoptionRequestEntity, (ar) => ar.shelter)
+  adoptionRequests: AdoptionRequestEntity[];
 }

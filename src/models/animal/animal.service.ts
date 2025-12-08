@@ -138,7 +138,10 @@ export class AnimalService {
         'Only shelter members, directive, or owners can register animals',
       );
     }
-    const animal = this.animalRepository.create({ ...createAnimalDto });
+    const animal = this.animalRepository.create({
+      ...createAnimalDto,
+      status: AnimalStatus.NOT_AVAILABLE,
+    });
     const res = await this.animalRepository.save(animal);
     // Notify shelter admins about the new animal registration
     const directives = await this.getShelterDirectives(shelterId);
@@ -196,13 +199,25 @@ export class AnimalService {
     return this.animalImageRepository.save(animalImage);
   }
 
+  async menberOfShelters(userId?: number): Promise<number[]> {
+    if (!userId) return [-1];
+    const shelterUsers = await this.shelterUserRepository.find({
+      where: { userId },
+    });
+    const res = shelterUsers.map((su) => su.shelterId);
+    if (res.length === 0) return [-1];
+    return res;
+  }
+
   async findAll(
     options: FindManyOptions<AnimalEntity> = {},
+    userId?: number,
   ): Promise<AnimalEntity[]> {
-    options.where = {
-      ...(options.where || {}),
-      status: In([AnimalStatus.AVAILABLE, AnimalStatus.ADOPTED]),
-    };
+    const meberOf = await this.menberOfShelters(userId);
+    options.where = [
+      { status: In([AnimalStatus.AVAILABLE]) },
+      { shelterId: In(meberOf) },
+    ];
     options.relations = {
       ...(options.relations || {}),
       shelter: true,
@@ -218,9 +233,10 @@ export class AnimalService {
 
   async findAllWithFilters(
     query: Record<string, string> = {},
+    userId?: number,
   ): Promise<AnimalEntity[]> {
-    if (!query || Object.keys(query).length === 0) {
-      return this.findAll();
+    if (!query) {
+      query = {};
     }
     const {
       shelterId,
@@ -266,9 +282,16 @@ export class AnimalService {
     if (hasMicrochip !== undefined)
       where.hasMicrochip = hasMicrochip === 'true';
 
-    where.status = In([AnimalStatus.AVAILABLE, AnimalStatus.ADOPTED]);
+    // where.status = In([AnimalStatus.AVAILABLE]);
+    const where2: FindOptionsWhere<AnimalEntity> = JSON.parse(
+      JSON.stringify(where),
+    ) as FindOptionsWhere<AnimalEntity>;
+    where2.status = AnimalStatus.AVAILABLE;
 
-    // console.log('Filters where:', where);
+    if (!shelterId) {
+      const meberOf = await this.menberOfShelters(userId);
+      where.shelterId = In(meberOf);
+    }
 
     const queryBuilder = this.animalRepository
       .createQueryBuilder('animal')
@@ -276,7 +299,7 @@ export class AnimalService {
       .leftJoinAndSelect('animal.species', 'species')
       .leftJoinAndSelect('animal.breed', 'breed')
       .leftJoinAndSelect('animal.images', 'images')
-      .where(where);
+      .where(shelterId ? where : [where, where2]);
 
     if (city) {
       queryBuilder.andWhere('shelter.city ILIKE :city', { city });
@@ -302,6 +325,9 @@ export class AnimalService {
         species: true,
         breed: true,
         images: true,
+        adoptionRequests: {
+          requester: true,
+        },
       },
     });
   }
@@ -434,5 +460,19 @@ export class AnimalService {
       }),
     );
     return res;
+  }
+
+  async setAdoptedByUser(
+    animalId: number,
+    userId: number,
+  ): Promise<AnimalEntity> {
+    const animal = await this.findOne(animalId);
+    if (!animal) {
+      throw new NotFoundException('Animal not found');
+    }
+    animal.status = AnimalStatus.ADOPTED;
+    animal.adoptedById = userId;
+    animal.adoptionDate = new Date();
+    return this.animalRepository.save(animal);
   }
 }

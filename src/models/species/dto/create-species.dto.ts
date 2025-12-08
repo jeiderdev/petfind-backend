@@ -10,5 +10,5 @@ export class CreateSpeciesDto {
 
   @IsOptional()
   @IsUrl()
-  imageUrl: string;
+  image: string;
 }

@@ -1,6 +1,7 @@
 import { OtpCodeEntity } from 'src/auth/entities/otp-code.entity';
 import { CollectionEntity } from 'src/file/entities/collection.entity';
 import { FileEntity } from 'src/file/entities/file.entity';
+import { AdoptionRequestEntity } from 'src/models/adoption-request/entities/adoption-request.entity';
 import { AnimalEntity } from 'src/models/animal/entities/animal.entity';
 import { ShelterUserEntity } from 'src/models/shelter-user/entities/shelter-user.entity';
 import { ShelterEntity } from 'src/models/shelter/entities/shelter.entity';
@@ -86,4 +87,10 @@ export class UserEntity {
 
   @OneToMany(() => CollectionEntity, (collection) => collection.user)
   collections: CollectionEntity[];
+
+  @OneToMany(() => AdoptionRequestEntity, (ar) => ar.requester)
+  adoptionRequests: AdoptionRequestEntity[];
+
+  @OneToMany(() => AdoptionRequestEntity, (ar) => ar.reviewedBy)
+  reviewers: AdoptionRequestEntity[];
 }

@@ -69,7 +69,14 @@ export class SpeciesService {
   async findAll(
     options: FindManyOptions<SpeciesEntity> = {},
   ): Promise<SpeciesEntity[]> {
-    return this.speciesRepository.find(options);
+    return this.speciesRepository.find({
+      ...options,
+      relations: {
+        ...(options.relations || {}),
+        breeds: true,
+      },
+      order: { name: 'ASC' },
+    });
   }
 
   async findOne(
@@ -80,6 +87,7 @@ export class SpeciesService {
     return this.speciesRepository.findOne({
       ...options,
       where: { ...(options.where || {}), id },
+      relations: { ...(options.relations || {}), breeds: true },
     });
   }
 

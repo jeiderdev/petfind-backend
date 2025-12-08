@@ -57,6 +57,12 @@ export class ShelterUserService {
     if (!user) {
       throw new BadRequestException('User with provided email not found');
     }
+    const existingShelterUser = await this.shelterUserRepository.findOne({
+      where: { shelterId, userId: user.id },
+    });
+    if (existingShelterUser) {
+      throw new BadRequestException('User is already a member of this shelter');
+    }
     const shelterUser = this.shelterUserRepository.create({
       ...createShelterUserDto,
       userId: user.id,
@@ -68,6 +74,28 @@ export class ShelterUserService {
     options: FindManyOptions<ShelterUserEntity> = {},
   ): Promise<ShelterUserEntity[]> {
     return this.shelterUserRepository.find(options);
+  }
+
+  async findAllByShelterId(
+    shelterId: number,
+    options: FindManyOptions<ShelterUserEntity> = {},
+    userId?: number,
+  ): Promise<ShelterUserEntity[]> {
+    // if (userId) {
+    //   const hasPermission = await this.hasPermissionToManageMembers(
+    //     shelterId,
+    //     userId,
+    //   );
+    //   if (!hasPermission) {
+    //     throw new BadRequestException(
+    //       'Only shelter admins or system admins can view shelter users',
+    //     );
+    //   }
+    // }
+    return this.shelterUserRepository.find({
+      ...options,
+      where: { ...(options.where || {}), shelterId },
+    });
   }
 
   async findOne(

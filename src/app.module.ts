@@ -14,6 +14,7 @@ import { SpeciesModule } from './models/species/species.module';
 import { BreedModule } from './models/breed/breed.module';
 import { AnimalModule } from './models/animal/animal.module';
 import { FileModule } from './file/file.module';
+import { AdoptionRequestModule } from './models/adoption-request/adoption-request.module';
 
 @Module({
   imports: [
@@ -78,6 +79,7 @@ import { FileModule } from './file/file.module';
     BreedModule,
     AnimalModule,
     FileModule,
+    AdoptionRequestModule,
   ],
   controllers: [AppController],
   providers: [AppService],

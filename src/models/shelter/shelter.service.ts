@@ -18,7 +18,6 @@ import { SendEmailDto } from 'src/smtp/dtos/send-email.dto';
 import { RejectShelterDto } from './dto/reject-shelter.dto';
 import { AnimalService } from '../animal/animal.service';
 import { ShelterImageEntity } from './entities/shelter-image.entity';
-import { AnimalStatus } from 'src/common/enums/animal.enum';
 
 @Injectable()
 export class ShelterService {
@@ -101,22 +100,9 @@ export class ShelterService {
   async findOne(
     id: number,
     options: FindManyOptions<ShelterEntity> = {},
-    userId?: number,
   ): Promise<ShelterEntity | null> {
     if (!id) throw new BadRequestException('Shelter ID is required');
-    if (userId) {
-      const hasPermission =
-        await this.shelterUserService.hasPermissionToManageMembers(id, userId);
-      if (!hasPermission) {
-        options.where = {
-          ...(options.where || {}),
-          animals: {
-            status: AnimalStatus.AVAILABLE,
-          },
-        };
-      }
-    }
-    return this.shelterRepository.findOne({
+    const finalOptions = {
       ...options,
       where: {
         ...(options.where || {}),
@@ -125,9 +111,9 @@ export class ShelterService {
       relations: {
         ...(options.relations || {}),
         images: true,
-        animals: true,
       },
-    });
+    };
+    return this.shelterRepository.findOne(finalOptions);
   }
 
   async findOneWithAnimals(
@@ -178,6 +164,12 @@ export class ShelterService {
     }
     Object.assign(shelter, updateShelterDto);
     return await this.shelterRepository.save(shelter);
+  }
+
+  async listForFilters(): Promise<ShelterEntity[]> {
+    return this.shelterRepository.find({
+      where: { status: ShelterStatus.APPROVED },
+    });
   }
 
   async approve(id: number, approverId: number): Promise<ShelterEntity> {
